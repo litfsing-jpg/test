@@ -1,0 +1,33 @@
+# API ключи и секреты
+.youtube_api_key
+*.key
+*.secret
+
+# Временные файлы Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Виртуальные окружения
+venv/
+env/
+ENV/
+
+# Временные CSV файлы
+*_temp.csv
+*_backup.csv
+
+# Логи
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
