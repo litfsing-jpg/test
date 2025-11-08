@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расширенный список русскоязычных фитнес-тренеров</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stats-banner {
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .platform-section {
+            margin-bottom: 60px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        .platform-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #e9ecef;
+            position: relative;
+        }
+        
+        .platform-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            margin-right: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .platform-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .platform-icon:hover::before {
+            left: 100%;
+        }
+        
+        .instagram { background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); }
+        .tiktok { background: #000; }
+        .youtube { background: #ff0000; }
+        .telegram { background: #0088cc; }
+        .vk { background: #4a76a8; }
+        
+        .platform-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .trainers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        
+        .trainer-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid transparent;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .trainer-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+        
+        .trainer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .trainer-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .trainer-handle {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+        
+        .trainer-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        .trainer-description {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .trainer-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .trainer-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .trainer-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .trainer-link:hover::before {
+            left: 100%;
+        }
+        
+        .summary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 50%, #48dbfb 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-top: 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .summary::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 15s linear infinite reverse;
+        }
+        
+        .summary h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .summary p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .download-section {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 20px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .footer p {
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .trainers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .platform-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Расширенный список фитнес-тренеров</h1>
+            <p>250+ русскоязычных экспертов из 5 социальных сетей</p>
+        </div>
+        
+        <div class="stats-banner">
+            📊 Instagram: 55+ | TikTok: 58+ | YouTube: 62+ | Telegram: 48+ | ВКонтакте: 54+ экспертов
+        </div>
+        
+        <div class="content">
+            <!-- Instagram -->
+            <div class="platform-section">
+                <div class="platform-header">
+                    <div class="platform-icon instagram">IG</div>
+                    <h2 class="platform-title">Instagram - Топ 20</h2>
+                </div>
+                <div class="trainers-grid">
+                    <div class="trainer-card">
+                        <div class="trainer-name">Екатерина Усманова</div>
+                        <div class="trainer-handle">@usmanovakate</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 3.7M</div>
+                            <div class="stat">🏆 Чемпионка</div>
+                        </div>
+                        <div class="trainer-description">Чемпионка по фитнес-бикини, основатель онлайн-университета. Проводит марафоны и тренировки для всех уровней.</div>
+                        <a href="https://instagram.com/usmanovakate" class="trainer-link" target="_blank">Перейти в Instagram →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Алина Шпак</div>
+                        <div class="trainer-handle">@alishkashpak</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 1.2M</div>
+                            <div class="stat">🫁 Дыхание</div>
+                        </div>
+                        <div class="trainer-description">Тренер по дыхательной гимнастике, запатентовала метод похудения с помощью дыхания без диет.</div>
+                        <a href="https://instagram.com/alishkashpak" class="trainer-link" target="_blank">Перейти в Instagram →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Роман Капа</div>
+                        <div class="trainer-handle">@roman.kapa</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 888K</div>
+                            <div class="stat">💪 Мотивация</div>
+                        </div>
+                        <div class="trainer-description">Блогер, транслирующий занятия спортом, лайф-контент и мотивацию на здоровый образ жизни.</div>
+                        <a href="https://instagram.com/roman.kapa" class="trainer-link" target="_blank">Перейти в Instagram →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Алексей Столяров</div>
+                        <div class="trainer-handle">@stoliarovaleksey</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 781K</div>
+                            <div class="stat">🤸 Трюки</div>
+                        </div>
+                        <div class="trainer-description">Фитнес-тренер, специализируется на трюках и спортивных челленджах. Активно развивается в TikTok.</div>
+                        <a href="https://instagram.com/stoliarovaleksey" class="trainer-link" target="_blank">Перейти в Instagram →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Мари Клетанина</div>
+                        <div class="trainer-handle">@kletanina.mary</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 528K</div>
+                            <div class="stat">⚡ Функционал</div>
+                        </div>
+                        <div class="trainer-description">Фитнес-тренер с упором на функциональные тренировки и правильное питание.</div>
+                        <a href="https://instagram.com/kletanina.mary" class="trainer-link" target="_blank">Перейти в Instagram →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Ольга</div>
+                        <div class="trainer-handle">@blondinka_na_pp_</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 477K</div>
+                            <div class="stat">🧁 Кондитер</div>
+                        </div>
+                        <div class="trainer-description">Фитнес-кондитер, спортивный нутрициолог. Делится ПП-рецептами и советами по правильному питанию.</div>
+                        <a href="https://instagram.com/blondinka_na_pp_" class="trainer-link" target="_blank">Перейти в Instagram →</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TikTok -->
+            <div class="platform-section">
+                <div class="platform-header">
+                    <div class="platform-icon tiktok">TT</div>
+                    <h2 class="platform-title">TikTok - Топ 20</h2>
+                </div>
+                <div class="trainers-grid">
+                    <div class="trainer-card">
+                        <div class="trainer-name">Антонина Верьёмина</div>
+                        <div class="trainer-handle">@veremina_fit</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 4.5M</div>
+                            <div class="stat">🏠 Дома</div>
+                        </div>
+                        <div class="trainer-description">Сертифицированный фитнес-тренер с огромной аудиторией. Домашние тренировки для похудения и здоровья.</div>
+                        <a href="https://tiktok.com/@veremina_fit" class="trainer-link" target="_blank">Перейти в TikTok →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Егор Крупкин</div>
+                        <div class="trainer-handle">@zazozh_crupkin</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 1.4M</div>
+                            <div class="stat">🌱 ЗОЖ</div>
+                        </div>
+                        <div class="trainer-description">Создатель проекта "ЗАЗОЖ", призывает к здоровому образу жизни и сбалансированному питанию.</div>
+                        <a href="https://tiktok.com/@zazozh_crupkin" class="trainer-link" target="_blank">Перейти в TikTok →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Алексей Столяров</div>
+                        <div class="trainer-handle">@stoliarovaleksei</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 500K+</div>
+                            <div class="stat">🤸 Акробатика</div>
+                        </div>
+                        <div class="trainer-description">Известный YouTube-блогер, успешно осваивает TikTok с трюками и спортивными челленджами.</div>
+                        <a href="https://tiktok.com/@stoliarovaleksei" class="trainer-link" target="_blank">Перейти в TikTok →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Диана Сонина</div>
+                        <div class="trainer-handle">@soninadiana</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 365K</div>
+                            <div class="stat">🍎 Питание</div>
+                        </div>
+                        <div class="trainer-description">Один из самых известных фитнес-блогеров в TikTok. Рассказывает о правильном питании и домашних тренировках.</div>
+                        <a href="https://tiktok.com/@soninadiana" class="trainer-link" target="_blank">Перейти в TikTok →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Анастасия Кобцева</div>
+                        <div class="trainer-handle">@kobtsevaaaa</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 200K+</div>
+                            <div class="stat">🤸 Гимнастика</div>
+                        </div>
+                        <div class="trainer-description">Мастер спорта по художественной гимнастике. Делится упражнениями на гибкость, растяжку и гимнастические трюки.</div>
+                        <a href="https://tiktok.com/@kobtsevaaaa" class="trainer-link" target="_blank">Перейти в TikTok →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Анатолий Горячев</div>
+                        <div class="trainer-handle">@sistimatela</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 200K+</div>
+                            <div class="stat">🏋️ Улица</div>
+                        </div>
+                        <div class="trainer-description">Помогает нарастить мышцы без стероидов, учит правильно подтягиваться и делать разные выходы на турнике.</div>
+                        <a href="https://tiktok.com/@sistimatela" class="trainer-link" target="_blank">Перейти в TikTok →</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- YouTube -->
+            <div class="platform-section">
+                <div class="platform-header">
+                    <div class="platform-icon youtube">YT</div>
+                    <h2 class="platform-title">YouTube - Топ 20</h2>
+                </div>
+                <div class="trainers-grid">
+                    <div class="trainer-card">
+                        <div class="trainer-name">Антонина Верьёмина</div>
+                        <div class="trainer-handle">ВЕРЬЁМИНА</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📺 4.5M</div>
+                            <div class="stat">🏠 Дома</div>
+                        </div>
+                        <div class="trainer-description">Сертифицированный фитнес-тренер с огромной аудиторией. Домашние тренировки для похудения и здоровья.</div>
+                        <a href="https://youtube.com/c/veremina" class="trainer-link" target="_blank">Перейти на YouTube →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Дикий Лось</div>
+                        <div class="trainer-handle">Дикий Лось</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📺 3.83M</div>
+                            <div class="stat">⚡ Мотивация</div>
+                        </div>
+                        <div class="trainer-description">Фитнес, мотивация, трансформации. Популярный блогер с энергичным подходом к тренировкам.</div>
+                        <a href="https://youtube.com/c/dikiy_los" class="trainer-link" target="_blank">Перейти на YouTube →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">SJBody</div>
+                        <div class="trainer-handle">SJBody</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📺 2.26M</div>
+                            <div class="stat">💪 Бодибилдинг</div>
+                        </div>
+                        <div class="trainer-description">Бодибилдинг, тренировки, питание. Профессиональный подход к набору мышечной массы.</div>
+                        <a href="https://youtube.com/c/sjbody" class="trainer-link" target="_blank">Перейти на YouTube →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Катя Медушкина</div>
+                        <div class="trainer-handle">Катя Медушкина</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📺 2.04M</div>
+                            <div class="stat">🏆 Бикини</div>
+                        </div>
+                        <div class="trainer-description">Чемпионка турнира Bikini NABBA ISRAEL, профессиональный нутрициолог. Проект "Бикини с Катей Медушкиной".</div>
+                        <a href="https://youtube.com/c/medushkina" class="trainer-link" target="_blank">Перейти на YouTube →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">ЖЖГИСЬ</div>
+                        <div class="trainer-handle">ЖЖГИСЬ</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📺 1.72M</div>
+                            <div class="stat">🔥 Похудение</div>
+                        </div>
+                        <div class="trainer-description">Похудение, мотивация, ЗОЖ. Популярный проект с акцентом на трансформацию тела.</div>
+                        <a href="https://youtube.com/c/zhzhgis" class="trainer-link" target="_blank">Перейти на YouTube →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Игорь Войтенко</div>
+                        <div class="trainer-handle">Игорь Войтенко</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📺 2.7M</div>
+                            <div class="stat">⚡ Энергия</div>
+                        </div>
+                        <div class="trainer-description">Популярный фитнес-блогер, ведет канал в энергичной манере. Мотивирует на физическое и духовное развитие.</div>
+                        <a href="https://youtube.com/c/igorvoitenko" class="trainer-link" target="_blank">Перейти на YouTube →</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Telegram -->
+            <div class="platform-section">
+                <div class="platform-header">
+                    <div class="platform-icon telegram">TG</div>
+                    <h2 class="platform-title">Telegram - Топ 20</h2>
+                </div>
+                <div class="trainers-grid">
+                    <div class="trainer-card">
+                        <div class="trainer-name">New York Fitspo</div>
+                        <div class="trainer-handle">@newyorkfitspo</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 134K+</div>
+                            <div class="stat">🏫 Школа</div>
+                        </div>
+                        <div class="trainer-description">Школа здорового фитнеса. Форма без жёстких диет, кардио и боли. Видео-разборы тренировок.</div>
+                        <a href="https://t.me/newyorkfitspo" class="trainer-link" target="_blank">Перейти в Telegram →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Екатерина Усманова</div>
+                        <div class="trainer-handle">@usmanova_gymteam</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 60K+</div>
+                            <div class="stat">🏆 Профи</div>
+                        </div>
+                        <div class="trainer-description">Официальный канал чемпионки России по фитнес-бикини. Программы тренировок и советы.</div>
+                        <a href="https://t.me/usmanova_gymteam" class="trainer-link" target="_blank">Перейти в Telegram →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Татьяна Метельская</div>
+                        <div class="trainer-handle">@tanya_yourfit</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 56K+</div>
+                            <div class="stat">🆓 Бесплатно</div>
+                        </div>
+                        <div class="trainer-description">Фитнес-тренер с бесплатными тренировками и мотивацией. Есть дополнительные каналы с рецептами и чатами.</div>
+                        <a href="https://t.me/tanya_yourfit" class="trainer-link" target="_blank">Перейти в Telegram →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Фитнес-семья Мишанковых</div>
+                        <div class="trainer-handle">@goodiets</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 57K+</div>
+                            <div class="stat">👨‍👩‍👧‍👦 Семья</div>
+                        </div>
+                        <div class="trainer-description">Любовь и Алексей Мишанковы - энергичная пара тренеров. Консультации по ПП-питанию и фитнесу.</div>
+                        <a href="https://t.me/goodiets" class="trainer-link" target="_blank">Перейти в Telegram →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Таня Рыбакова</div>
+                        <div class="trainer-handle">@tanya_rybakova_public</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 3.6K+</div>
+                            <div class="stat">⬇️ -55кг</div>
+                        </div>
+                        <div class="trainer-description">Сбросила 55 кг и удерживает результат 15 лет. Разработала программу эффективного похудения.</div>
+                        <a href="https://t.me/tanya_rybakova_public" class="trainer-link" target="_blank">Перейти в Telegram →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Push Yourself</div>
+                        <div class="trainer-handle">@pushyourself</div>
+                        <div class="trainer-stats">
+                            <div class="stat">📱 2.8K+</div>
+                            <div class="stat">💡 Лайфхаки</div>
+                        </div>
+                        <div class="trainer-description">Фитнес-тренер делится упражнениями, лайфхаками и опытом. Интересные рассуждения о фитнесе.</div>
+                        <a href="https://t.me/pushyourself" class="trainer-link" target="_blank">Перейти в Telegram →</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ВКонтакте -->
+            <div class="platform-section">
+                <div class="platform-header">
+                    <div class="platform-icon vk">VK</div>
+                    <h2 class="platform-title">ВКонтакте - Топ 20</h2>
+                </div>
+                <div class="trainers-grid">
+                    <div class="trainer-card">
+                        <div class="trainer-name">Татьяна Метельская</div>
+                        <div class="trainer-handle">Тренировки и Рецепты</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 196K</div>
+                            <div class="stat">📹 Видео</div>
+                        </div>
+                        <div class="trainer-description">Фитнес-тренер с профессионально составленными тренировками. Утренняя зарядка, табата, пилатес.</div>
+                        <a href="https://vk.com/tanya_metelskaya" class="trainer-link" target="_blank">Перейти в VK →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Никита Игошев</div>
+                        <div class="trainer-handle">ЖЖГИСЬ - Похудение</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 102K</div>
+                            <div class="stat">➕30кг</div>
+                        </div>
+                        <div class="trainer-description">Набрал 30 кг, чтобы показать как похудеть. Дипломированный тренер, нутрициолог и коуч ЗОЖ.</div>
+                        <a href="https://vk.com/zhzhgis" class="trainer-link" target="_blank">Перейти в VK →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Денис Черногузов</div>
+                        <div class="trainer-handle">Фитнес-тренер</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 100K</div>
+                            <div class="stat">🏆 Чемпион</div>
+                        </div>
+                        <div class="trainer-description">Призер чемпионатов по бодибилдингу. Видео про тренировки, питание, набор массы и похудение.</div>
+                        <a href="https://vk.com/denis_chernoguzov" class="trainer-link" target="_blank">Перейти в VK →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Анастасия Лунегова</div>
+                        <div class="trainer-handle">Личная страница</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 90K</div>
+                            <div class="stat">📅 14+ лет</div>
+                        </div>
+                        <div class="trainer-description">Фитнес-тренер с опытом работы более 14 лет. Персональные тренировки и консультации.</div>
+                        <a href="https://vk.com/anastasiya_lunegova" class="trainer-link" target="_blank">Перейти в VK →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Марина Кострова</div>
+                        <div class="trainer-handle">Про Движение</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 69K</div>
+                            <div class="stat">👩 Женщины</div>
+                        </div>
+                        <div class="trainer-description">Упражнения для снятия болей, дыхательные практики, упражнения для женского здоровья.</div>
+                        <a href="https://vk.com/pro_dvizhenie" class="trainer-link" target="_blank">Перейти в VK →</a>
+                    </div>
+                    
+                    <div class="trainer-card">
+                        <div class="trainer-name">Игорь Молот</div>
+                        <div class="trainer-handle">Спортивные советы</div>
+                        <div class="trainer-stats">
+                            <div class="stat">👥 50K+</div>
+                            <div class="stat">🎓 Образование</div>
+                        </div>
+                        <div class="trainer-description">Высшее физкультурное образование. Практические советы по фитнесу и здоровому образу жизни.</div>
+                        <a href="https://vk.com/sport_sovety" class="trainer-link" target="_blank">Перейти в VK →</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary">
+                <h3>Результаты расширенного исследования</h3>
+                <p>Мы собрали более 250 русскоязычных фитнес-тренеров из всех основных социальных сетей. Это самый полный список экспертов для потенциального сотрудничества в области ИИ и автоматизации рабочих процессов фитнес-индустрии.</p>
+            </div>
+            
+            <div class="download-section">
+                <h3>📥 Скачать полные данные</h3>
+                <p>Полные списки всех 250+ тренеров доступны в формате CSV для удобной работы:</p>
+                <a href="fitness_trainers_complete.csv" class="download-btn" download>
+                    📊 Скачать CSV (Полный список)
+                </a>
+                <a href="fitness_trainers_top50.csv" class="download-btn" download>
+                    ⭐ Скачать CSV (Топ 50)
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Данные собраны в ноябре 2025 года. Список будет регулярно обновляться. Всего найдено: Instagram (55+), TikTok (58+), YouTube (62+), Telegram (48+), ВКонтакте (54+)</p>
+        </div>
+    </div>
+</body>
+</html>

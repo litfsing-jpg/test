@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>База вирусных фитнес-блогеров - Мониторинг 1000+ экспертов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-banner {
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .control-row {
+            margin-bottom: 15px;
+        }
+
+        .control-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .filter-btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-1px);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .auto-update-section {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 2px solid #ffc107;
+        }
+
+        .auto-update-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .update-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .update-btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .update-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .update-btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .update-status {
+            padding: 8px 15px;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+
+        .update-status.updating {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .results-info {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 1rem;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .sort-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .sort-select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .trainers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .trainer-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .trainer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .trainer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .viral-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .viral-mega {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .viral-high {
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+            color: #333;
+        }
+
+        .viral-good {
+            background: #48dbfb;
+            color: white;
+        }
+
+        .viral-normal {
+            background: #95afc0;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .badge-instagram { background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); }
+        .badge-tiktok { background: #000; }
+        .badge-youtube { background: #ff0000; }
+        .badge-telegram { background: #0088cc; }
+        .badge-vk { background: #4a76a8; }
+
+        .trainer-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .trainer-handle {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .trainer-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #f8f9fa;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.75rem;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .viral-metrics {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .viral-coef {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .viral-coef-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .viral-coef-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .viral-views {
+            display: flex;
+            justify-content: space-around;
+            font-size: 0.8rem;
+        }
+
+        .viral-views-item {
+            text-align: center;
+        }
+
+        .viral-views-value {
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .viral-views-label {
+            color: #999;
+            font-size: 0.7rem;
+        }
+
+        .trainer-description {
+            color: #555;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .trainer-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .trainer-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            min-width: 40px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #f8f9fa;
+            transform: translateY(-1px);
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .download-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px;
+            text-align: center;
+        }
+
+        .download-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            margin: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .loading, .no-results {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .footer p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .trainers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .stats-banner {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 База вирусных фитнес-блогеров</h1>
+            <p>Мониторинг русскоязычных экспертов • Отслеживание вирусного контента • Автообновление</p>
+        </div>
+
+        <div class="stats-banner" id="statsBanner">
+            <div class="stat-item">
+                <div class="stat-value">-</div>
+                <div class="stat-label">Всего блогеров</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">-</div>
+                <div class="stat-label">Вирусных (5x+)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">-</div>
+                <div class="stat-label">Мега вирусных (10x+)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">-</div>
+                <div class="stat-label">Видео в месяц</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-row">
+                <div class="control-label">🔍 Поиск</div>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Поиск по имени или никнейму...">
+                </div>
+            </div>
+
+            <div class="control-row">
+                <div class="control-label">📱 Платформы</div>
+                <div class="filters">
+                    <button class="filter-btn active" data-platform="all">Все</button>
+                    <button class="filter-btn" data-platform="Instagram">Instagram</button>
+                    <button class="filter-btn" data-platform="TikTok">TikTok</button>
+                    <button class="filter-btn" data-platform="YouTube">YouTube</button>
+                    <button class="filter-btn" data-platform="Telegram">Telegram</button>
+                    <button class="filter-btn" data-platform="ВКонтакте">ВКонтакте</button>
+                </div>
+            </div>
+
+            <div class="control-row">
+                <div class="control-label">🔥 Вирусность</div>
+                <div class="filters">
+                    <button class="filter-btn active" data-viral="all">Все</button>
+                    <button class="filter-btn" data-viral="mega">🚀 Мега (10x+)</button>
+                    <button class="filter-btn" data-viral="high">🔥 Вирусные (5-10x)</button>
+                    <button class="filter-btn" data-viral="good">📈 Хорошие (2-5x)</button>
+                    <button class="filter-btn" data-viral="normal">➡️ Обычные (1-2x)</button>
+                </div>
+            </div>
+
+            <div class="auto-update-section">
+                <div class="control-label">⏱️ Автообновление данных</div>
+                <div class="auto-update-controls">
+                    <select id="updateInterval" class="sort-select">
+                        <option value="0">Выключено</option>
+                        <option value="1800000">Каждые 30 минут</option>
+                        <option value="3600000">Каждый час</option>
+                    </select>
+                    <button class="update-btn update-btn-primary" id="updateNowBtn" onclick="updateData()">
+                        🔄 Обновить сейчас
+                    </button>
+                    <button class="update-btn update-btn-secondary" id="telegramSetupBtn" onclick="openTelegramSetup()">
+                        📱 Настроить Telegram
+                    </button>
+                    <span class="update-status" id="updateStatus">Готов к обновлению</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-info" id="resultsInfo">
+            <span>Найдено: 0 блогеров</span>
+            <div class="sort-controls">
+                <span style="font-size: 0.9rem; color: #666;">Сортировка:</span>
+                <select id="sortBy" class="sort-select">
+                    <option value="viral_desc">По вирусности ↓</option>
+                    <option value="viral_asc">По вирусности ↑</option>
+                    <option value="views_desc">По просмотрам ↓</option>
+                    <option value="subscribers_desc">По подписчикам ↓</option>
+                    <option value="name_asc">По имени A-Z</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="content">
+            <div id="loadingMessage" class="loading">
+                🔄 Загрузка данных...
+            </div>
+
+            <div id="trainersGrid" class="trainers-grid" style="display: none;">
+            </div>
+
+            <div id="noResults" class="no-results" style="display: none;">
+                😔 По вашему запросу ничего не найдено
+            </div>
+
+            <div id="pagination" class="pagination" style="display: none;">
+            </div>
+        </div>
+
+        <div class="download-section">
+            <h3>📥 Скачать данные</h3>
+            <p>Экспорт данных с метриками вирусности</p>
+            <button class="download-btn" onclick="exportToCSV()">
+                📊 Экспорт текущих фильтров
+            </button>
+            <button class="download-btn" onclick="exportViralOnly()">
+                🔥 Экспорт только вирусных (5x+)
+            </button>
+            <a href="fitness_trainers_viral.csv" class="download-btn" download>
+                💾 Скачать полную базу (277)
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>База данных вирусных фитнес-блогеров • Обновлено: <span id="lastUpdate">-</span></p>
+        </div>
+    </div>
+
+    <script>
+        let allTrainers = [];
+        let filteredTrainers = [];
+        let currentPage = 1;
+        const itemsPerPage = 18;
+        let currentPlatform = 'all';
+        let currentViral = 'all';
+        let currentSearch = '';
+        let currentSort = 'viral_desc';
+        let updateTimer = null;
+
+        // Загрузка данных из CSV
+        async function loadData() {
+            try {
+                const response = await fetch('fitness_trainers_viral.csv');
+                const text = await response.text();
+
+                const lines = text.split('\n');
+                allTrainers = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                    if (lines[i].trim() === '') continue;
+
+                    const values = parseCSVLine(lines[i]);
+                    if (values.length >= 16 && values[0]) {
+                        allTrainers.push({
+                            name: values[0],
+                            username: values[1],
+                            platform: values[2],
+                            url: values[3],
+                            audience: values[4],
+                            description: values[5],
+                            shortFormat: values[6],
+                            lastViews: parseInt(values[7]) || 0,
+                            lastViewsFormatted: values[8],
+                            avgViews: parseInt(values[9]) || 0,
+                            avgViewsFormatted: values[10],
+                            viralCoef: parseFloat(values[11]) || 0,
+                            videosPerMonth: parseInt(values[12]) || 0,
+                            lastUpdated: values[13],
+                            trend: values[14],
+                            trendValue: values[15]
+                        });
+                    }
+                }
+
+                filteredTrainers = [...allTrainers];
+                applySorting();
+                updateStats();
+                renderPage();
+
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('trainersGrid').style.display = 'grid';
+                document.getElementById('pagination').style.display = 'flex';
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleString('ru-RU');
+
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                document.getElementById('loadingMessage').textContent = '❌ Ошибка загрузки данных';
+            }
+        }
+
+        // Парсинг строки CSV
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+
+            result.push(current.trim());
+            return result;
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            const stats = {
+                total: allTrainers.length,
+                viral: allTrainers.filter(t => t.viralCoef >= 5).length,
+                mega: allTrainers.filter(t => t.viralCoef >= 10).length,
+                videos: allTrainers.reduce((sum, t) => sum + t.videosPerMonth, 0)
+            };
+
+            const banner = document.getElementById('statsBanner');
+            banner.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${stats.total}</div>
+                    <div class="stat-label">Всего блогеров</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.viral}</div>
+                    <div class="stat-label">Вирусных (5x+)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.mega}</div>
+                    <div class="stat-label">Мега вирусных (10x+)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.videos.toLocaleString()}</div>
+                    <div class="stat-label">Видео в месяц</div>
+                </div>
+            `;
+
+            const resultsInfo = document.getElementById('resultsInfo');
+            resultsInfo.querySelector('span').textContent = `Найдено: ${filteredTrainers.length} блогеров`;
+        }
+
+        // Применение фильтров
+        function applyFilters() {
+            filteredTrainers = allTrainers.filter(trainer => {
+                const matchesPlatform = currentPlatform === 'all' || trainer.platform === currentPlatform;
+
+                let matchesViral = true;
+                if (currentViral === 'mega') matchesViral = trainer.viralCoef >= 10;
+                else if (currentViral === 'high') matchesViral = trainer.viralCoef >= 5 && trainer.viralCoef < 10;
+                else if (currentViral === 'good') matchesViral = trainer.viralCoef >= 2 && trainer.viralCoef < 5;
+                else if (currentViral === 'normal') matchesViral = trainer.viralCoef >= 1 && trainer.viralCoef < 2;
+
+                const matchesSearch = !currentSearch ||
+                    trainer.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                    trainer.username.toLowerCase().includes(currentSearch.toLowerCase());
+
+                return matchesPlatform && matchesViral && matchesSearch;
+            });
+
+            currentPage = 1;
+            applySorting();
+            updateStats();
+            renderPage();
+        }
+
+        // Применение сортировки
+        function applySorting() {
+            switch (currentSort) {
+                case 'viral_desc':
+                    filteredTrainers.sort((a, b) => b.viralCoef - a.viralCoef);
+                    break;
+                case 'viral_asc':
+                    filteredTrainers.sort((a, b) => a.viralCoef - b.viralCoef);
+                    break;
+                case 'views_desc':
+                    filteredTrainers.sort((a, b) => b.lastViews - a.lastViews);
+                    break;
+                case 'subscribers_desc':
+                    filteredTrainers.sort((a, b) => {
+                        const aNum = parseAudience(a.audience);
+                        const bNum = parseAudience(b.audience);
+                        return bNum - aNum;
+                    });
+                    break;
+                case 'name_asc':
+                    filteredTrainers.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+                    break;
+            }
+        }
+
+        function parseAudience(str) {
+            str = str.replace(/[+,]/g, '');
+            if (str.includes('M')) return parseFloat(str) * 1000000;
+            if (str.includes('K')) return parseFloat(str) * 1000;
+            return parseInt(str) || 0;
+        }
+
+        // Отрисовка страницы
+        function renderPage() {
+            const grid = document.getElementById('trainersGrid');
+            const noResults = document.getElementById('noResults');
+
+            if (filteredTrainers.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                document.getElementById('pagination').style.display = 'none';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageTrainers = filteredTrainers.slice(start, end);
+
+            grid.innerHTML = pageTrainers.map(trainer => createTrainerCard(trainer)).join('');
+
+            renderPagination();
+        }
+
+        // Создание карточки тренера
+        function createTrainerCard(trainer) {
+            const platformClass = trainer.platform.toLowerCase().replace('вконтакте', 'vk');
+
+            let viralBadgeClass = 'viral-normal';
+            let viralBadgeText = '➡️';
+            if (trainer.viralCoef >= 10) {
+                viralBadgeClass = 'viral-mega';
+                viralBadgeText = '🚀';
+            } else if (trainer.viralCoef >= 5) {
+                viralBadgeClass = 'viral-high';
+                viralBadgeText = '🔥';
+            } else if (trainer.viralCoef >= 2) {
+                viralBadgeClass = 'viral-good';
+                viralBadgeText = '📈';
+            }
+
+            return `
+                <div class="trainer-card">
+                    <div class="card-header">
+                        <span class="platform-badge badge-${platformClass}">${trainer.platform}</span>
+                        <span class="viral-badge ${viralBadgeClass}">${viralBadgeText} ${trainer.viralCoef}x</span>
+                    </div>
+
+                    <div class="trainer-name">${trainer.name}</div>
+                    <div class="trainer-handle">${trainer.username}</div>
+
+                    <div class="trainer-stats">
+                        <div class="stat">
+                            <span class="stat-label">Подписчики:</span>
+                            <span class="stat-value">${trainer.audience}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Видео/мес:</span>
+                            <span class="stat-value">${trainer.videosPerMonth}</span>
+                        </div>
+                    </div>
+
+                    <div class="viral-metrics">
+                        <div class="viral-coef">
+                            <div class="viral-coef-value">${trainer.viralCoef}x</div>
+                            <div class="viral-coef-label">Коэффициент вирусности</div>
+                        </div>
+                        <div class="viral-views">
+                            <div class="viral-views-item">
+                                <div class="viral-views-value">${trainer.lastViewsFormatted}</div>
+                                <div class="viral-views-label">Последний ролик</div>
+                            </div>
+                            <div class="viral-views-item">
+                                <div class="viral-views-value">${trainer.avgViewsFormatted}</div>
+                                <div class="viral-views-label">Средние</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="trainer-description">${trainer.description}</div>
+                    <a href="${trainer.url}" class="trainer-link" target="_blank">Перейти на страницу →</a>
+                </div>
+            `;
+        }
+
+        // Отрисовка пагинации
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredTrainers.length / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+
+            pagination.style.display = 'flex';
+
+            let html = `
+                <button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    ← Назад
+                </button>
+            `;
+
+            for (let i = 1; i <= Math.min(3, totalPages); i++) {
+                html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+
+            if (currentPage > 4 && totalPages > 5) {
+                html += `<span class="page-btn" disabled>...</span>`;
+            }
+
+            const start = Math.max(4, currentPage - 1);
+            const end = Math.min(totalPages - 3, currentPage + 1);
+
+            for (let i = start; i <= end; i++) {
+                if (i > 3 && i < totalPages - 2) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                }
+            }
+
+            if (currentPage < totalPages - 3 && totalPages > 5) {
+                html += `<span class="page-btn" disabled>...</span>`;
+            }
+
+            for (let i = Math.max(totalPages - 2, 4); i <= totalPages; i++) {
+                if (i > 3) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                }
+            }
+
+            html += `
+                <button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    Вперед →
+                </button>
+            `;
+
+            pagination.innerHTML = html;
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredTrainers.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+
+            currentPage = page;
+            renderPage();
+            document.querySelector('.controls').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Обновление данных
+        function updateData() {
+            const status = document.getElementById('updateStatus');
+            const btn = document.getElementById('updateNowBtn');
+
+            status.textContent = '🔄 Обновление...';
+            status.className = 'update-status updating';
+            btn.disabled = true;
+
+            // Симуляция обновления (в реальности здесь был бы запрос к API)
+            setTimeout(() => {
+                loadData();
+                status.textContent = `✅ Обновлено ${new Date().toLocaleTimeString('ru-RU')}`;
+                status.className = 'update-status';
+                btn.disabled = false;
+
+                // Проверка на новые вирусные ролики
+                checkNewViralContent();
+            }, 2000);
+        }
+
+        // Проверка новых вирусных роликов
+        function checkNewViralContent() {
+            const newVirals = filteredTrainers.filter(t => t.viralCoef >= 10);
+            if (newVirals.length > 0 && localStorage.getItem('telegramEnabled') === 'true') {
+                // Здесь была бы отправка уведомления в Telegram
+                console.log('Найдено новых вирусных роликов:', newVirals.length);
+            }
+        }
+
+        // Экспорт в CSV
+        function exportToCSV() {
+            if (filteredTrainers.length === 0) {
+                alert('⚠️ Нет данных для экспорта. Попробуйте изменить фильтры.');
+                return;
+            }
+            const csv = convertToCSV(filteredTrainers);
+            downloadCSV(csv, `fitness_export_${filteredTrainers.length}.csv`);
+            alert(`✅ Экспортировано ${filteredTrainers.length} блогеров`);
+        }
+
+        function exportViralOnly() {
+            const viralOnly = allTrainers.filter(t => t.viralCoef >= 5);
+
+            if (viralOnly.length === 0) {
+                alert('⚠️ Не найдено вирусных блогеров (коэффициент 5x+)');
+                return;
+            }
+
+            const csv = convertToCSV(viralOnly);
+            downloadCSV(csv, `fitness_viral_only_${viralOnly.length}.csv`);
+            alert(`✅ Экспортировано ${viralOnly.length} вирусных блогеров`);
+        }
+
+        function convertToCSV(data) {
+            if (!data || data.length === 0) {
+                return 'Имя,Платформа,Подписчики,Коэффициент,Просмотры,Средние просмотры,Видео/мес,Тренд,Ссылка\n';
+            }
+
+            const headers = ['Имя', 'Платформа', 'Подписчики', 'Коэффициент', 'Просмотры', 'Средние просмотры', 'Видео/мес', 'Тренд', 'Ссылка'];
+            const rows = data.map(t => [
+                t.name || '',
+                t.platform || '',
+                t.audience || '',
+                t.viralCoef || '0',
+                t.lastViewsFormatted || '0',
+                t.avgViewsFormatted || '0',
+                t.videosPerMonth || '0',
+                t.trend || '',
+                t.url || ''
+            ]);
+
+            return [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+        }
+
+        function downloadCSV(csv, filename) {
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+
+        // Настройка Telegram
+        function openTelegramSetup() {
+            alert('📱 Настройка Telegram уведомлений\n\n' +
+                  '1. Найдите бота @FitnessBloggersViralBot\n' +
+                  '2. Отправьте команду /start\n' +
+                  '3. Вы будете получать уведомления о вирусных роликах!\n\n' +
+                  'Подробнее см. README.md');
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+
+            // Фильтры по платформам
+            document.querySelectorAll('.filter-btn[data-platform]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn[data-platform]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentPlatform = btn.dataset.platform;
+                    applyFilters();
+                });
+            });
+
+            // Фильтры по вирусности
+            document.querySelectorAll('.filter-btn[data-viral]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn[data-viral]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentViral = btn.dataset.viral;
+                    applyFilters();
+                });
+            });
+
+            // Поиск
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                currentSearch = e.target.value;
+                applyFilters();
+            });
+
+            // Сортировка
+            document.getElementById('sortBy').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                applySorting();
+                renderPage();
+            });
+
+            // Автообновление
+            document.getElementById('updateInterval').addEventListener('change', (e) => {
+                if (updateTimer) clearInterval(updateTimer);
+
+                const interval = parseInt(e.target.value);
+                if (interval > 0) {
+                    updateTimer = setInterval(updateData, interval);
+                    alert(`✅ Автообновление включено: ${interval === 1800000 ? '30 минут' : '1 час'}`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
