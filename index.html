@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>База вирусных фитнес-блогеров - Мониторинг 1000+ экспертов</title>
+    <title>База вирусных фитнес-блогеров - Мониторинг 190+ экспертов</title>
     <style>
         * {
             margin: 0;
@@ -569,7 +569,7 @@
     <div class="container">
         <div class="header">
             <h1>🔥 База вирусных фитнес-блогеров</h1>
-            <p>Мониторинг 1000+ экспертов • Отслеживание вирусного контента • Автообновление</p>
+            <p>Мониторинг русскоязычных экспертов • Отслеживание вирусного контента • Автообновление</p>
         </div>
 
         <div class="stats-banner" id="statsBanner">
@@ -673,15 +673,15 @@
 
         <div class="download-section">
             <h3>📥 Скачать данные</h3>
-            <p>Полная база с метриками вирусности</p>
+            <p>Экспорт данных с метриками вирусности</p>
             <button class="download-btn" onclick="exportToCSV()">
-                📊 Скачать CSV с метриками
+                📊 Экспорт текущих фильтров
             </button>
             <button class="download-btn" onclick="exportViralOnly()">
-                🔥 Скачать только вирусные
+                🔥 Экспорт только вирусных (5x+)
             </button>
             <a href="fitness_trainers_viral.csv" class="download-btn" download>
-                💾 Скачать полную базу
+                💾 Скачать полную базу (192)
             </a>
         </div>
 
@@ -1044,28 +1044,44 @@
 
         // Экспорт в CSV
         function exportToCSV() {
+            if (filteredTrainers.length === 0) {
+                alert('⚠️ Нет данных для экспорта. Попробуйте изменить фильтры.');
+                return;
+            }
             const csv = convertToCSV(filteredTrainers);
-            downloadCSV(csv, 'fitness_viral_export.csv');
+            downloadCSV(csv, `fitness_export_${filteredTrainers.length}.csv`);
+            alert(`✅ Экспортировано ${filteredTrainers.length} блогеров`);
         }
 
         function exportViralOnly() {
-            const viralOnly = filteredTrainers.filter(t => t.viralCoef >= 5);
+            const viralOnly = allTrainers.filter(t => t.viralCoef >= 5);
+
+            if (viralOnly.length === 0) {
+                alert('⚠️ Не найдено вирусных блогеров (коэффициент 5x+)');
+                return;
+            }
+
             const csv = convertToCSV(viralOnly);
-            downloadCSV(csv, 'fitness_viral_only.csv');
+            downloadCSV(csv, `fitness_viral_only_${viralOnly.length}.csv`);
+            alert(`✅ Экспортировано ${viralOnly.length} вирусных блогеров`);
         }
 
         function convertToCSV(data) {
+            if (!data || data.length === 0) {
+                return 'Имя,Платформа,Подписчики,Коэффициент,Просмотры,Средние просмотры,Видео/мес,Тренд,Ссылка\n';
+            }
+
             const headers = ['Имя', 'Платформа', 'Подписчики', 'Коэффициент', 'Просмотры', 'Средние просмотры', 'Видео/мес', 'Тренд', 'Ссылка'];
             const rows = data.map(t => [
-                t.name,
-                t.platform,
-                t.audience,
-                t.viralCoef,
-                t.lastViewsFormatted,
-                t.avgViewsFormatted,
-                t.videosPerMonth,
-                t.trend,
-                t.url
+                t.name || '',
+                t.platform || '',
+                t.audience || '',
+                t.viralCoef || '0',
+                t.lastViewsFormatted || '0',
+                t.avgViewsFormatted || '0',
+                t.videosPerMonth || '0',
+                t.trend || '',
+                t.url || ''
             ]);
 
             return [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
