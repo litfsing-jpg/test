@@ -1,5 +1,7 @@
 # API ключи и секреты
 .youtube_api_key
+.instagram_credentials
+instagram_session.json
 *.key
 *.secret
 
@@ -18,6 +20,7 @@ ENV/
 # Временные CSV файлы
 *_temp.csv
 *_backup.csv
+*_real.csv
 
 # Логи
 *.log
