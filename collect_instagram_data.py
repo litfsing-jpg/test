@@ -10,7 +10,7 @@ import json
 import time
 import os
 from typing import Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 
 try:
     from instagrapi import Client
@@ -92,27 +92,63 @@ class InstagramReelsCollector:
             print(f"   ❌ Ошибка получения данных пользователя @{username}: {e}")
             return None
 
-    def get_user_reels(self, user_id: int, count: int = 10) -> List[Dict]:
-        """Получает последние Reels пользователя"""
+    def get_user_reels(self, user_id: int, count: int = 10, days: int = 30) -> List[Dict]:
+        """
+        Получает Reels пользователя за последние N дней
+
+        Args:
+            user_id: ID пользователя Instagram
+            count: Сколько роликов нужно вернуть (по умолчанию 10)
+            days: За сколько дней собирать статистику (по умолчанию 30)
+
+        Returns:
+            Список Reels за указанный период, исключая старые закрепленные
+        """
 
         try:
-            clips = self.client.user_clips(user_id, amount=count)
+            # Запрашиваем больше роликов, чтобы точно захватить нужный период
+            # instagrapi сама обрабатывает pydantic errors и возвращает то, что смогла распарсить
+            clips = self.client.user_clips(user_id, amount=50)
 
-            reels_data = []
+            # Дата начала периода (30 дней назад)
+            cutoff_date = datetime.now() - timedelta(days=days)
+
+            # Собираем ВСЕ ролики с данными
+            all_reels = []
             for clip in clips:
-                reels_data.append({
-                    'id': clip.pk,
-                    'code': clip.code,
-                    'url': f"https://www.instagram.com/reel/{clip.code}/",
-                    'caption': clip.caption_text if clip.caption_text else '',
-                    'view_count': clip.view_count if hasattr(clip, 'view_count') else 0,
-                    'like_count': clip.like_count,
-                    'comment_count': clip.comment_count,
-                    'play_count': clip.play_count if hasattr(clip, 'play_count') else clip.view_count,
-                    'created_at': clip.taken_at.strftime('%Y-%m-%d %H:%M:%S')
-                })
+                try:
+                    # Получаем дату публикации
+                    clip_date = clip.taken_at.replace(tzinfo=None) if hasattr(clip.taken_at, 'tzinfo') else clip.taken_at
 
-            return reels_data
+                    all_reels.append({
+                        'id': clip.pk,
+                        'code': clip.code,
+                        'url': f"https://www.instagram.com/reel/{clip.code}/",
+                        'caption': clip.caption_text if clip.caption_text else '',
+                        'view_count': clip.view_count if hasattr(clip, 'view_count') else 0,
+                        'like_count': clip.like_count,
+                        'comment_count': clip.comment_count,
+                        'play_count': clip.play_count if hasattr(clip, 'play_count') else clip.view_count,
+                        'created_at': clip.taken_at.strftime('%Y-%m-%d %H:%M:%S'),
+                        'clip_date': clip_date,
+                        'days_old': (datetime.now() - clip_date).days
+                    })
+                except Exception as e:
+                    # Пропускаем проблемные ролики
+                    continue
+
+            # Фильтруем только свежие ролики (за последние N дней)
+            fresh_reels = [r for r in all_reels if r['clip_date'] >= cutoff_date]
+
+            # Сортируем по дате (новые первые) и берем топ-N
+            fresh_reels.sort(key=lambda x: x['clip_date'], reverse=True)
+            result_reels = fresh_reels[:count]
+
+            # Удаляем служебное поле clip_date перед возвратом
+            for r in result_reels:
+                del r['clip_date']
+
+            return result_reels
 
         except Exception as e:
             print(f"   ❌ Ошибка получения Reels: {e}")
@@ -249,9 +285,9 @@ def collect_instagram_data(username: str, password: str, input_csv: str, output_
 
         print(f"   👥 Подписчики: {collector.format_number(user_info['followers'])}")
 
-        # Получаем Reels
-        reels = collector.get_user_reels(user_info['user_id'], count=10)
-        print(f"   🎬 Найдено Reels: {len(reels)}")
+        # Получаем Reels за последние 30 дней
+        reels = collector.get_user_reels(user_info['user_id'], count=10, days=30)
+        print(f"   🎬 Найдено Reels за последний месяц: {len(reels)}")
 
         if not reels:
             print(f"   ⚠️  Нет Reels")
@@ -265,6 +301,10 @@ def collect_instagram_data(username: str, password: str, input_csv: str, output_
         metrics = collector.calculate_viral_metrics(reels, user_info['followers'])
 
         if metrics['reels_count'] > 0:
+            # Показываем период роликов
+            oldest_reel = max([r['days_old'] for r in reels])
+            newest_reel = min([r['days_old'] for r in reels])
+            print(f"   📅 Период: {oldest_reel}-{newest_reel} дней назад")
             print(f"   📊 Средние просмотры: {collector.format_number(metrics['avg_views'])}")
             print(f"   💖 Средние лайки: {collector.format_number(metrics['avg_likes'])}")
             print(f"   🔥 Коэффициент: {metrics['viral_coefficient']}x")
