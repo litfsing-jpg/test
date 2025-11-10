@@ -228,8 +228,8 @@ def main():
     if not finder.login():
         exit(1)
 
-    # Ищем аккаунты
-    accounts = finder.find_accounts(seed_accounts, target_count=500)
+    # Ищем аккаунты (только 20 для теста)
+    accounts = finder.find_accounts(seed_accounts, target_count=20)
 
     # Сохраняем
     finder.save_to_excel('имена.csv')
