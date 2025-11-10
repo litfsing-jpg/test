@@ -163,7 +163,9 @@ class InstagramReelsCollector:
                 'max_views': 0,
                 'avg_likes': 0,
                 'viral_coefficient': 0.0,
-                'reels_count': 0
+                'reels_count': 0,
+                'today_reel_views': None,
+                'today_reel_date': None
             }
 
         # Используем play_count как просмотры
@@ -180,12 +182,24 @@ class InstagramReelsCollector:
         # Вирусный коэффициент = средние просмотры / подписчики
         viral_coef = avg_views / followers if followers > 0 else 0
 
+        # Ищем рилс за сегодня (самый свежий, 0 дней назад)
+        today_reel_views = None
+        today_reel_date = None
+
+        for reel in reels:
+            if reel.get('days_old') == 0:
+                today_reel_views = reel['play_count']
+                today_reel_date = reel['created_at']
+                break
+
         return {
             'avg_views': int(avg_views),
             'max_views': int(max_views),
             'avg_likes': int(avg_likes),
             'viral_coefficient': round(viral_coef, 2),
-            'reels_count': len(reels)
+            'reels_count': len(reels),
+            'today_reel_views': today_reel_views,
+            'today_reel_date': today_reel_date
         }
 
     def format_number(self, num: int) -> str:
@@ -324,6 +338,16 @@ def collect_instagram_data(username: str, password: str, input_csv: str, output_
         account['Тренд'] = trend
         account['Тренд_значение'] = trend_value
 
+        # Добавляем рилс за сегодня
+        if metrics['today_reel_views'] is not None:
+            account['Рилс_сегодня'] = metrics['today_reel_views']
+            account['Рилс_сегодня_форматир'] = collector.format_number(metrics['today_reel_views'])
+            account['Дата_последнего_рилса'] = metrics['today_reel_date']
+        else:
+            account['Рилс_сегодня'] = ''
+            account['Рилс_сегодня_форматир'] = '-'
+            account['Дата_последнего_рилса'] = ''
+
         updated_accounts.append(account)
         success_count += 1
 
@@ -339,7 +363,8 @@ def collect_instagram_data(username: str, password: str, input_csv: str, output_
         'Имя', 'Никнейм/Название', 'Платформа', 'Ссылка', 'Аудитория', 'Описание',
         'Формат_видео', 'Просмотры_последнего', 'Просмотры_последнего_форматир',
         'Средние_просмотры', 'Средние_просмотры_форматир', 'Коэффициент_вирусности',
-        'Видео_в_месяц', 'Последнее_обновление', 'Тренд', 'Тренд_значение'
+        'Видео_в_месяц', 'Последнее_обновление', 'Тренд', 'Тренд_значение',
+        'Рилс_сегодня', 'Рилс_сегодня_форматир', 'Дата_последнего_рилса'
     ]
 
     with open(output_csv, 'w', encoding='utf-8-sig', newline='') as f:

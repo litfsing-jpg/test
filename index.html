@@ -731,7 +731,10 @@
                             videosPerMonth: parseInt(values[12]) || 0,
                             lastUpdated: values[13],
                             trend: values[14],
-                            trendValue: values[15]
+                            trendValue: values[15],
+                            todayReelViews: parseInt(values[16]) || 0,
+                            todayReelViewsFormatted: values[17] || '-',
+                            todayReelDate: values[18] || ''
                         });
                     }
                 }
@@ -917,12 +920,12 @@
 
                     <div class="trainer-stats">
                         <div class="stat">
-                            <span class="stat-label">Подписчики:</span>
+                            <span class="stat-label">👥 Подписчики:</span>
                             <span class="stat-value">${trainer.audience}</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-label">Видео/мес:</span>
-                            <span class="stat-value">${trainer.videosPerMonth}</span>
+                            <span class="stat-label">🎬 Рилс сегодня:</span>
+                            <span class="stat-value" style="${trainer.todayReelViewsFormatted === '-' ? 'color: #999;' : 'color: #667eea; font-weight: 600;'}">${trainer.todayReelViewsFormatted}</span>
                         </div>
                     </div>
 
